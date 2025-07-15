@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Malla Curricular - Ciencia Política</title>
   <style>
     body {
@@ -11,20 +11,45 @@
       color: #333;
     }
 
-    h1, h2 {
+    h1 {
       color: #2e4d38; /* Evergreen */
       border-bottom: 1px solid #ccc;
-      padding-bottom: 4px;
+      padding-bottom: 6px;
+      margin-bottom: 20px;
+    }
+
+    #malla {
+      display: flex;
+      gap: 20px; /* espacio entre columnas */
+      flex-wrap: wrap; /* que se adapte en pantallas chicas */
+    }
+
+    .columna-ano {
+      flex: 1 1 220px; /* cada columna mínimo 220px y crece según espacio */
+      background-color: #fff; /* fondo blanco para que destaque */
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      min-width: 220px;
+    }
+
+    .columna-ano h2 {
+      color: #2e4d38; /* Evergreen */
+      margin-top: 0;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 6px;
+      margin-bottom: 15px;
     }
 
     .materia {
       display: block;
       margin: 10px 0;
-      padding: 12px;
+      padding: 10px 12px;
       border-radius: 8px;
-      font-size: 16px;
+      font-size: 15px;
       border: 1px solid #ccc;
       transition: background-color 0.3s ease;
+      user-select: none;
     }
 
     .habilitada {
@@ -47,11 +72,16 @@
     input[type="checkbox"] {
       margin-right: 10px;
       transform: scale(1.2);
+      cursor: pointer;
+    }
+
+    input[type="checkbox"]:disabled {
+      cursor: not-allowed;
     }
 
     .boton-reset {
-      margin-top: 20px;
-      padding: 10px 20px;
+      margin-top: 25px;
+      padding: 12px 25px;
       font-family: "Times New Roman", serif;
       font-size: 16px;
       background-color: #2e4d38;
@@ -59,10 +89,22 @@
       border: none;
       border-radius: 6px;
       cursor: pointer;
+      transition: background-color 0.3s ease;
     }
 
     .boton-reset:hover {
       background-color: #3b5c46;
+    }
+
+    @media (max-width: 900px) {
+      #malla {
+        flex-direction: column;
+      }
+      .columna-ano {
+        min-width: auto;
+        width: 100%;
+        margin-bottom: 20px;
+      }
     }
   </style>
 </head>
@@ -131,9 +173,12 @@
       container.innerHTML = '';
 
       for (let año = 1; año <= 5; año++) {
+        const columna = document.createElement('div');
+        columna.className = 'columna-ano';
+
         const titulo = document.createElement('h2');
         titulo.textContent = `Año ${año}`;
-        container.appendChild(titulo);
+        columna.appendChild(titulo);
 
         materias.filter(m => m.año === año).forEach(m => {
           const label = document.createElement('label');
@@ -166,20 +211,7 @@
           label.appendChild(checkbox);
           label.appendChild(span);
 
-          container.appendChild(label);
+          columna.appendChild(label);
         });
-      }
-    }
 
-    function resetearMalla() {
-      if (confirm('¿Seguro que querés borrar todo tu progreso?')) {
-        localStorage.removeItem('estadoMaterias');
-        location.reload();
-      }
-    }
-
-    crearMalla();
-  </script>
-
-</body>
-</html>
+        container.appendChild
