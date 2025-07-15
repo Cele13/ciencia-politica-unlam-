@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Malla Curricular - Ciencia Política</title>
+  <style>
+    body {
+      font-family: "Times New Roman", serif;
+      margin: 20px;
+      background-color: #f5f0e6; /* Beige claro */
+      color: #333;
+    }
+
+    h1, h2 {
+      color: #2e4d38; /* Evergreen */
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 4px;
+    }
+
+    .materia {
+      display: block;
+      margin: 10px 0;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      transition: background-color 0.3s ease;
+    }
+
+    .habilitada {
+      background-color: #d6e8d0; /* Verde pastel suave */
+      cursor: pointer;
+    }
+
+    .aprobada {
+      background-color: #2e4d38; /* Evergreen */
+      color: white;
+      font-weight: bold;
+    }
+
+    .bloqueada {
+      background-color: #e0d8c8; /* Beige grisáceo */
+      color: #888;
+      cursor: not-allowed;
+    }
+
+    input[type="checkbox"] {
+      margin-right: 10px;
+      transform: scale(1.2);
+    }
+
+    .boton-reset {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-family: "Times New Roman", serif;
+      font-size: 16px;
+      background-color: #2e4d38;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .boton-reset:hover {
+      background-color: #3b5c46;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Malla Curricular - Ciencia Política</h1>
+  <p>Marcá las materias aprobadas. El progreso se guarda automáticamente.</p>
+
+  <div id="malla"></div>
+
+  <button class="boton-reset" onclick="resetearMalla()">Borrar progreso</button>
+
+  <script>
+    const materias = [
+      { id: 'procesos_mundiales', nombre: 'Procesos Sociohistóricos Mundiales', año: 1, requiere: [] },
+      { id: 'filosofia', nombre: 'Elementos de Filosofía', año: 1, requiere: [] },
+      { id: 'sociologia', nombre: 'Elementos de Sociología', año: 1, requiere: [] },
+      { id: 'intro_politica', nombre: 'Introducción a la Ciencia Política', año: 1, requiere: [] },
+      { id: 'economia_elementos', nombre: 'Elementos de Economía', año: 1, requiere: [] },
+      { id: 'administracion_elementos', nombre: 'Elementos de Administración', año: 1, requiere: [] },
+      { id: 'taller_integracion', nombre: 'Taller de Integración', año: 1, requiere: ['sociologia', 'intro_politica'] },
+      { id: 'ingles1', nombre: 'Inglés I', año: 1, requiere: [] },
+      { id: 'computacion1', nombre: 'Computación I', año: 1, requiere: [] },
+
+      { id: 'teoria_politica1', nombre: 'Teoría Política I', año: 2, requiere: ['intro_politica'] },
+      { id: 'teoria_sociologica', nombre: 'Teoría Sociológica', año: 2, requiere: ['sociologia', 'intro_politica'] },
+      { id: 'metodologia1', nombre: 'Metodología de la Investigación I', año: 2, requiere: ['taller_integracion'] },
+      { id: 'procesos_argentinos', nombre: 'Procesos Sociohistóricos Argentinos', año: 2, requiere: ['procesos_mundiales'] },
+      { id: 'economia1', nombre: 'Economía I', año: 2, requiere: ['economia_elementos'] },
+      { id: 'historia_politica', nombre: 'Historia Política Americana', año: 2, requiere: ['teoria_politica1'] },
+      { id: 'ingles2', nombre: 'Inglés II', año: 2, requiere: ['ingles1'] },
+      { id: 'computacion2', nombre: 'Computación II', año: 2, requiere: ['computacion1'] },
+
+      { id: 'economia2', nombre: 'Economía II', año: 3, requiere: ['economia1'] },
+      { id: 'teoria_politica2', nombre: 'Teoría Política II', año: 3, requiere: ['teoria_politica1', 'teoria_sociologica'] },
+      { id: 'administracion_publica', nombre: 'Administración Pública', año: 3, requiere: ['administracion_elementos'] },
+      { id: 'metodologia2', nombre: 'Metodología de la Investigación II', año: 3, requiere: ['metodologia1'] },
+      { id: 'derecho_constitucional', nombre: 'Derecho Constitucional', año: 3, requiere: [] },
+      { id: 'demografia', nombre: 'Demografía Social', año: 3, requiere: ['teoria_politica2'] },
+      { id: 'politica_comunicacion', nombre: 'Política y Comunicación', año: 3, requiere: ['teoria_politica2'] },
+      { id: 'ingles3', nombre: 'Inglés III', año: 3, requiere: ['ingles2'] },
+
+      { id: 'economia_argentina', nombre: 'Economía Política Argentina', año: 4, requiere: ['demografia'] },
+      { id: 'sistemas_comparados', nombre: 'Sistemas Políticos Comparados', año: 4, requiere: ['derecho_constitucional'] },
+      { id: 'teoria_contemporanea', nombre: 'Teoría Política Contemporánea', año: 4, requiere: ['metodologia2', 'derecho_constitucional', 'politica_comunicacion'] },
+      { id: 'gestion_publica', nombre: 'Gestión de Políticas Públicas', año: 4, requiere: ['economia2', 'teoria_politica2', 'administracion_publica'] },
+      { id: 'derecho_administrativo', nombre: 'Derecho Administrativo', año: 4, requiere: ['derecho_constitucional'] },
+      { id: 'finanzas', nombre: 'Finanzas Públicas', año: 4, requiere: [] },
+      { id: 'ingles4', nombre: 'Inglés IV', año: 4, requiere: ['ingles3'] },
+
+      { id: 'psicosociologia', nombre: 'Psicosociología de las Organizaciones', año: 5, requiere: ['teoria_sociologica'] },
+      { id: 'relaciones_internacionales', nombre: 'Relaciones Internacionales', año: 5, requiere: ['teoria_contemporanea'] },
+      { id: 'seminario', nombre: 'Seminario de Tópicos de Avanzada', año: 5, requiere: ['economia_argentina', 'sistemas_comparados', 'teoria_contemporanea'] },
+      { id: 'taller_sociales', nombre: 'Taller de Gestión de Políticas Sociales', año: 5, requiere: ['psicosociologia', 'gestion_publica', 'teoria_contemporanea', 'finanzas'] },
+      { id: 'taller_produccion', nombre: 'Taller de Gestión de Políticas de Producción', año: 5, requiere: ['psicosociologia', 'gestion_publica', 'teoria_contemporanea', 'finanzas'] },
+    ];
+
+    const estado = JSON.parse(localStorage.getItem('estadoMaterias')) || {};
+
+    function guardarEstado() {
+      localStorage.setItem('estadoMaterias', JSON.stringify(estado));
+    }
+
+    function crearMalla() {
+      const container = document.getElementById('malla');
+      container.innerHTML = '';
+
+      for (let año = 1; año <= 5; año++) {
+        const titulo = document.createElement('h2');
+        titulo.textContent = `Año ${año}`;
+        container.appendChild(titulo);
+
+        materias.filter(m => m.año === año).forEach(m => {
+          const label = document.createElement('label');
+          label.className = 'materia';
+
+          const habilitada = m.requiere.every(r => estado[r]);
+          const aprobada = estado[m.id];
+
+          if (aprobada) {
+            label.classList.add('aprobada');
+          } else if (habilitada) {
+            label.classList.add('habilitada');
+          } else {
+            label.classList.add('bloqueada');
+          }
+
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.checked = !!estado[m.id];
+          checkbox.disabled = !habilitada;
+          checkbox.addEventListener('change', () => {
+            estado[m.id] = checkbox.checked;
+            guardarEstado();
+            crearMalla();
+          });
+
+          const span = document.createElement('span');
+          span.textContent = m.nombre;
+
+          label.appendChild(checkbox);
+          label.appendChild(span);
+
+          container.appendChild(label);
+        });
+      }
+    }
+
+    function resetearMalla() {
+      if (confirm('¿Seguro que querés borrar todo tu progreso?')) {
+        localStorage.removeItem('estadoMaterias');
+        location.reload();
+      }
+    }
+
+    crearMalla();
+  </script>
+
+</body>
+</html>
